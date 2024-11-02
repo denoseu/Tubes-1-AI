@@ -80,6 +80,7 @@ def simulated_annealing(cube, initial_temp, cooling_rate):
     current_cube = cube.copy()
     current_score = calculate_objective_function(current_cube, magic_number)
     temperature = initial_temp
+    acceptance_probs = []
 
     scores = [current_score]
 
@@ -108,6 +109,7 @@ def simulated_annealing(cube, initial_temp, cooling_rate):
             accepted = True
         else:
             acceptance_probability = math.exp(delta_score / temperature)
+            acceptance_probs.append(acceptance_probability)
             static_val = 0.5
             if static_val < acceptance_probability:
                 accepted = True
@@ -128,7 +130,7 @@ def simulated_annealing(cube, initial_temp, cooling_rate):
     print(f"\nFinal cube:\n{current_cube}")
     print(f"Final score: {current_score}")
     
-    return current_cube, current_score, scores
+    return current_cube, current_score, scores, acceptance_probs
 
 # Inisialisasi state awal dari kubus (5x5x5) dengan angka 1 hingga 125 secara acak
 n = 5
@@ -145,11 +147,17 @@ initial_cube = np.array([
 ])
 
 # Jalankan algoritma Simulated Annealing
-final_cube, final_score, scores = simulated_annealing(initial_cube, initial_temp=1000, cooling_rate=0.9999)
+final_cube, final_score, scores, acceptance_probs = simulated_annealing(initial_cube, initial_temp=1000, cooling_rate=0.9999)
 
 # Plot nilai objective function setiap iterasi
 plt.plot(scores)
 plt.xlabel('Iteration')
 plt.ylabel('Objective Function Score')
 plt.title('Objective Function Score vs Iteration')
+plt.show()
+
+plt.plot(acceptance_probs)
+plt.xlabel('Iterations')
+plt.ylabel('Acceptance Probability')
+plt.title('Acceptance Probability vs Iterations')
 plt.show()
