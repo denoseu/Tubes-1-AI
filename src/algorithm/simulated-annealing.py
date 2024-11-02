@@ -140,12 +140,12 @@ initial_cube = np.array([
 ])
 
 import time
-start_time = time.time();
+start_time = time.time()
 # Jalankan algoritma Simulated Annealing dengan debug messages horizontal
 final_cube, final_score = simulated_annealing(initial_cube, initial_temp=1000, cooling_rate=0.9999)
 
 print(f"Final score: {final_score}")
-end_time = time.time();
+end_time = time.time()
 
 # waktu ekskusi dalam detik
 execution_time = end_time - start_time
