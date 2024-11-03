@@ -1,6 +1,7 @@
 import numpy as np
 import random
 import math
+import matplotlib.pyplot as plt
 
 # Fungsi untuk menghitung magic number dari sebuah kubus dengan sisi n
 def calculate_magic_number(n):
@@ -79,6 +80,9 @@ def simulated_annealing(cube, initial_temp, cooling_rate):
     current_cube = cube.copy()
     current_score = calculate_objective_function(current_cube, magic_number)
     temperature = initial_temp
+    acceptance_probs = []
+
+    scores = [current_score]
 
     print(f"Initial cube:\n{current_cube}\n")
     print(f"Initial score: {current_score}, Magic number: {magic_number}\n")
@@ -105,6 +109,7 @@ def simulated_annealing(cube, initial_temp, cooling_rate):
             accepted = True
         else:
             acceptance_probability = math.exp(delta_score / temperature)
+            acceptance_probs.append(acceptance_probability)
             static_val = 0.5
             if static_val < acceptance_probability:
                 accepted = True
@@ -117,13 +122,15 @@ def simulated_annealing(cube, initial_temp, cooling_rate):
             current_cube = new_cube
             current_score = new_score
 
+        scores.append(current_score)
+
         # Turunkan temperatur
         temperature *= cooling_rate
 
     print(f"\nFinal cube:\n{current_cube}")
     print(f"Final score: {current_score}")
     
-    return current_cube, current_score
+    return current_cube, current_score, scores, acceptance_probs
 
 # Inisialisasi state awal dari kubus (5x5x5) dengan angka 1 hingga 125 secara acak
 n = 5
@@ -139,14 +146,18 @@ initial_cube = np.array([
     [[66, 72, 27, 102, 48], [29, 28, 122, 125, 11], [51, 15, 41, 124, 84], [36, 110, 46, 22, 101], [78, 54, 99, 24, 60]]
 ])
 
-import time
-start_time = time.time()
-# Jalankan algoritma Simulated Annealing dengan debug messages horizontal
-final_cube, final_score = simulated_annealing(initial_cube, initial_temp=1000, cooling_rate=0.9999)
+# Jalankan algoritma Simulated Annealing
+final_cube, final_score, scores, acceptance_probs = simulated_annealing(initial_cube, initial_temp=1000, cooling_rate=0.9999)
 
-print(f"Final score: {final_score}")
-end_time = time.time()
+# Plot nilai objective function setiap iterasi
+plt.plot(scores)
+plt.xlabel('Iteration')
+plt.ylabel('Objective Function Score')
+plt.title('Objective Function Score vs Iteration')
+plt.show()
 
-# waktu ekskusi dalam detik
-execution_time = end_time - start_time
-print(f"Execution time: {execution_time} seconds")
+plt.plot(acceptance_probs)
+plt.xlabel('Iterations')
+plt.ylabel('Acceptance Probability')
+plt.title('Acceptance Probability vs Iterations')
+plt.show()
