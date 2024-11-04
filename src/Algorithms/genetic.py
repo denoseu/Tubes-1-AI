@@ -108,10 +108,8 @@ class GeneticAlgorithm(AlgorithmStrategy):
         child1.cube = child1_cube
         child2.cube = child2_cube
 
-        child1.initialize_sums()
-        child2.initialize_sums()
-        child1.update_position_map()
-        child2.update_position_map()
+        child1.remake_cube()
+        child2.remake_cube()
         
         return child1,child2
 
