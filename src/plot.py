@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 
 class PlotManager:
     def __init__(self, scores=None, acceptance_probs=None):
@@ -59,7 +60,9 @@ class PlotManager:
         plt.show()
 
     def plot_acceptance_probability(self):
-        plt.plot(self.acceptance_probs)
+        window_size = 200
+        smoothed_probs = np.convolve(self.acceptance_probs, np.ones(window_size)/window_size, mode='valid')
+        plt.plot(smoothed_probs)
         plt.xlabel('Iterations')
         plt.ylabel('Acceptance Probability')
         plt.title('Acceptance Probability vs Iterations')
@@ -100,7 +103,7 @@ class PlotManager:
         plt.show()
 
 
-    def plot_genetic_algorithm(self, max_fitness, avg_fitness):
+    def plot_genetic_algorithm(self, max_fitness, avg_fitness, total_time):
         plt.figure(figsize=(10, 6))
         plt.plot(range(1, len(max_fitness) + 1), max_fitness, label="Max Fitness", color="blue")
         plt.plot(range(1, len(avg_fitness) + 1), avg_fitness, label="Average Fitness", color="green")
@@ -109,4 +112,9 @@ class PlotManager:
         plt.title("Maximum and Average Fitness over Generations")
         plt.legend()
         plt.grid()
+
+        textstr = f'Total Execution Time: {total_time:.2f} seconds'
+        plt.gca().text(0.05, 0.95, textstr, transform=plt.gca().transAxes,
+                    fontsize=10, verticalalignment='top', bbox=dict(facecolor='white', alpha=0.5))
+
         plt.show()
