@@ -37,11 +37,13 @@ while True:
         algorithm_manager.setStrategy(stochastic)
     if (choice == 5):
         algorithm_manager.setStrategy(simulatedAnnealing)
-        final_cube, final_scsore, iterations = algorithm_manager.solve(magic_cube)
     if (choice == 6):
         pass
     if (choice == 7):
         break
+
+    final_cube, final_score, iterations = algorithm_manager.solve(magic_cube)
+    
 
     while True:
         replay_experiment = input("Apakah Anda ingin melakukan eksperimen ulang (y or n): ").strip().lower()
