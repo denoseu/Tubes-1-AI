@@ -1,7 +1,7 @@
 import numpy as np
 import random
 
-from strategy import AlgorithmStrategy
+from Algorithms.strategy import AlgorithmStrategy
 from cube import MagicCube
 
 class GeneticAlgorithm(AlgorithmStrategy):
@@ -53,20 +53,22 @@ class GeneticAlgorithm(AlgorithmStrategy):
 
         return best_individual,best_fitness,iterations
 
+                new_population.extend([child1, child2])
 
-    def _getSumOfObjectiveFunctions(self,population):
+            population = new_population
+
+    def _getSumOfObjectiveFunctions(self, population):
         scores = [cube.getCurrentScore() for cube in population]
         return abs(sum(scores))
 
-
-    def _roulette_wheel_selection(self,population, fitness_scores):
+    def _roulette_wheel_selection(self, population, fitness_scores):
         selected_idx = np.random.choice(len(population), p=fitness_scores)
         return population[selected_idx]
     
-    def _ordered_crossover(self,parent1,parent2):
+    def _ordered_crossover(self, parent1, parent2):
         n = parent1.n
 
-        # ubah jdi 1d array
+        # Convert to 1D array
         parent1_flatten = parent1.cube.flatten()
         parent2_flatten = parent2.cube.flatten()
 
@@ -100,7 +102,7 @@ class GeneticAlgorithm(AlgorithmStrategy):
         
         return child1,child2
 
-    def _fill_remaining_values(self,child,source,pos):
+    def _fill_remaining_values(self, child, source, pos):
         for gene in source:
             if gene not in child:
                 while child[pos] != -1: 
@@ -126,8 +128,6 @@ class GeneticAlgorithm(AlgorithmStrategy):
         fitness_total = sum(real_fitness)
 
         return [x/fitness_total for x in real_fitness]
-
-
 
 
         
