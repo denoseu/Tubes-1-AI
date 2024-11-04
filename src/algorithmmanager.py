@@ -151,40 +151,6 @@ class AlgorithmManager:
 
         return best_cube, best_score
 
-    def steepest_ascent(self, magic_cube, max_steps=100):
-        current_score = magic_cube.getCurrentScore()
-        steps = 0
-        improved = True
-
-        while improved and steps < max_steps:
-            improved = False
-            best_score = current_score
-            best_positions = None
-            steps += 1
-
-            for i in range(1, magic_cube.n**3):
-                for j in range(i + 1, magic_cube.n**3):
-                    pos1 = magic_cube.get_position(i)
-                    pos2 = magic_cube.get_position(j)
-
-                    magic_cube.swap_elements(pos1, pos2)
-                    swap_score = magic_cube.getCurrentScore()
-
-                    if swap_score > best_score:
-                        best_score = swap_score
-                        best_positions = (pos1, pos2)
-
-                    # Revert swap
-                    magic_cube.swap_elements(pos1, pos2)
-
-            if best_positions:
-                pos1, pos2 = best_positions
-                magic_cube.swap_elements(pos1, pos2)
-                current_score = best_score
-                improved = True
-
-        return current_score
-
     def stochastic_hill_climbing(cube, magic_cube, max_steps=100):
         current_score = magic_cube.getCurrentScore()
         steps = 0
