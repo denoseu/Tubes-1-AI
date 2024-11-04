@@ -15,6 +15,7 @@ class AnimationManager:
 
         self.root = tk.Tk()
         self.root.title("Local Search Visualisation")
+        self.root.geometry("800x600")
 
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(111, projection='3d')
@@ -27,13 +28,28 @@ class AnimationManager:
     def setup_controls(self):
         """Initialize playback controls."""
         self.controls_frame = tk.Frame(self.root)
-        self.controls_frame.pack()
+        self.controls_frame.pack(pady=10)  # Add some vertical padding for better layout
 
-        self.play_button = tk.Button(self.controls_frame, text="Play", command=self.play)
-        self.play_button.pack(side=tk.LEFT)
+        # Adjusting the size of the Play button
+        self.play_button = tk.Button(
+            self.controls_frame, 
+            text="Play", 
+            command=self.play,
+            width=10,  # Set the width of the button
+            height=2,  # Set the height of the button
+            font=('Arial', 12)  # Change the font and size
+        )
+        self.play_button.pack(side=tk.LEFT, padx=5)  # Add horizontal padding
 
-        self.progress_bar = tk.Scale(self.controls_frame, from_=0, to=len(self.iterations) - 1,
-                                     orient=tk.HORIZONTAL, command=self.on_progress_change, label="Progress")
+        # Progress bar
+        self.progress_bar = tk.Scale(
+            self.controls_frame, 
+            from_=0, 
+            to=len(self.iterations) - 1,
+            orient=tk.HORIZONTAL, 
+            command=self.on_progress_change, 
+            label="Progress"
+        )
         self.progress_bar.pack(side=tk.LEFT, fill=tk.X, expand=True)
 
         # Add an Entry widget to allow direct frame input
@@ -43,13 +59,29 @@ class AnimationManager:
         self.frame_entry.pack(side=tk.LEFT)
 
 
+        # Add an Entry widget to allow direct frame input
+        self.frame_entry = tk.Entry(self.controls_frame, width=5)
+        self.frame_entry.insert(0, str(self.current_frame))
+        self.frame_entry.bind("<Return>", self.on_frame_entry)
+        self.frame_entry.pack(side=tk.LEFT)
+
+        # Speed label
         speed_label = tk.Label(self.controls_frame, text="Speed:")
         speed_label.pack(side=tk.LEFT)
 
-        self.speed_slider = tk.Scale(self.controls_frame, from_=0.5, to=10.0, resolution=0.5,
-                                     orient=tk.HORIZONTAL, label="Speed", command=self.update_speed)
+        # Adjusting the size of the Speed slider
+        self.speed_slider = tk.Scale(
+            self.controls_frame, 
+            from_=0.5, 
+            to=10.0, 
+            resolution=0.5,
+            orient=tk.HORIZONTAL, 
+            label="Speed"
+        )
         self.speed_slider.set(self.playback_speed)
         self.speed_slider.pack(side=tk.LEFT)
+
+
 
     def update_speed(self, value):
         """Update playback speed based on slider value."""

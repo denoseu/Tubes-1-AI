@@ -22,10 +22,11 @@ class SidewaysStrategy(AlgorithmStrategy):
             found_better = False
 
             # Generate all unique position pairs and evaluate scores
+            positions = [cube.get_position(i) for i in range(1, cube.n**3)]
             with ThreadPoolExecutor(os.cpu_count()) as executor:
                 futures = {
                     executor.submit(cube.evaluate_swap_score, pos1, pos2): (pos1, pos2)
-                    for pos1, pos2 in combinations(range(1, cube.n**3), 2)
+                    for pos1, pos2 in combinations(positions, 2)
                 }
 
                 for future in as_completed(futures):
@@ -40,6 +41,8 @@ class SidewaysStrategy(AlgorithmStrategy):
                     elif swap_score == best_score and not found_better:
                         # Allow sideways move if no better score is found
                         best_positions = (pos1, pos2)
+                    
+
             
             # If a swap was selected, apply it and update scores
             if best_positions:
@@ -47,6 +50,8 @@ class SidewaysStrategy(AlgorithmStrategy):
                 cube.swap_elements(pos1, pos2)
                 current_score = best_score
                 scores.append(current_score)
+
+                print("Ayam")
                 
                 if found_better:
                     improved = True
