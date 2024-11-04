@@ -1,26 +1,28 @@
 from strategy import AlgorithmStrategy
+from plot import PlotManager
+
 class RandomRestartStrategy(AlgorithmStrategy):
-    def execute(self, magic_cube, max_restarts=10):
-            best_score = float("-inf")
-            best_cube = None
+    def execute(self, cube, max_restarts=100):
+        best_score = float("-inf")
+        best_cube = None
+        best_iterations = None
+        all_scores = []
 
-            iterations = []
+        for _ in range(max_restarts):
+            cube.initialize_cube(cube.n)
+            cube.initialize_sums()
 
-            for _ in range(max_restarts):
-                magic_cube.initialize_cube(magic_cube.n)
-                magic_cube.initialize_sums()
-                current_score = magic_cube.steepest_ascent_parallel(magic_cube)
+            _, current_score, iterations = self.steepest_ascent_parallel(cube, plot=False)
+            
+            restart_scores = [score for _, score in iterations]
+            all_scores.append(restart_scores)
+            
+            if current_score > best_score:
+                best_score = current_score
+                best_cube = cube.cube.copy()
+                best_iterations = iterations
 
-                if current_score > best_score:
-                    best_score = current_score
-                    best_cube = magic_cube.cube.copy()
+        plot_manager = PlotManager()
+        plot_manager.plot_multiple_objective_functions(all_scores)
 
-                    iterations.append((magic_cube.cube.copy(),current_score))
-
-            return best_cube, best_score
-    
-
-# 12 | 345
-# 25341
-
-##  12534
+        return best_cube, best_score, best_iterations
