@@ -1,9 +1,12 @@
 from Algorithms.strategy import AlgorithmStrategy
 from plot import PlotManager
 import numpy as np
+import time
 
 class StochasticStrategy(AlgorithmStrategy):
     def execute(self, cube, max_steps=1500000):
+        start_time = time.time()
+        
         current_score = cube.getCurrentScore()
         steps = 0
         scores = [current_score]
@@ -24,13 +27,17 @@ class StochasticStrategy(AlgorithmStrategy):
             else:
                 cube.swap_elements(pos1, pos2)
             
-            iterations.append((cube.cube.copy(),current_score))
+            iterations.append((cube.cube.copy(), current_score))
+            scores.append(current_score)
 
             print(f"Step {steps} | Pos1: {pos1} <-> Pos2: {pos2} | Current Score: {current_score}")
 
-            scores.append(current_score)
-    
-        plot_manager = PlotManager()
-        plot_manager.plot_objective_function(scores)
+        end_time = time.time()
+        total_time = end_time - start_time
+        final_score = current_score
+        total_iterations = steps
 
-        return cube.cube, current_score, iterations
+        plot_manager = PlotManager(scores)
+        plot_manager.plot_objective_function(total_iterations=total_iterations, total_time=total_time, final_score=final_score)
+
+        return cube.cube, final_score, iterations
