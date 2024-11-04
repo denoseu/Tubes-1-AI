@@ -1,11 +1,11 @@
 from cube import MagicCube
 from algomanager import AlgorithmManager
-from simulated_annealing import SimulatedAnnealingStrategy
-from steepest_asscent import SteepestAscentStrategy
-from sideways import SidewaysStrategy
-from random_restart import RandomRestartStrategy
-from stochastic import StochasticStrategy
-from genetic import GeneticAlgorithm
+from Algorithms.simulated_annealing import SimulatedAnnealingStrategy
+from Algorithms.steepest_asscent import SteepestAscentStrategy
+from Algorithms.sideways import SidewaysStrategy
+from Algorithms.random_restart import RandomRestartStrategy
+from Algorithms.stochastic import StochasticStrategy
+from Algorithms.genetic import GeneticAlgorithm
 import time
 
 n = 5

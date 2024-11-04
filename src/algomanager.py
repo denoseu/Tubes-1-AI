@@ -1,4 +1,4 @@
-from strategy import AlgorithmStrategy
+from Algorithms.strategy import AlgorithmStrategy
 class AlgorithmManager:
 
     def setStrategy(self, strategy: AlgorithmStrategy):

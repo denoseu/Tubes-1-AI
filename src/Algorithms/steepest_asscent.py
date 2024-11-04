@@ -1,4 +1,4 @@
-from strategy import AlgorithmStrategy
+from Algorithms.strategy import AlgorithmStrategy
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from plot import PlotManager
 import time
