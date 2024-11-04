@@ -59,11 +59,7 @@ class AnimationManager:
         self.frame_entry.pack(side=tk.LEFT)
 
 
-        # Add an Entry widget to allow direct frame input
-        self.frame_entry = tk.Entry(self.controls_frame, width=5)
-        self.frame_entry.insert(0, str(self.current_frame))
-        self.frame_entry.bind("<Return>", self.on_frame_entry)
-        self.frame_entry.pack(side=tk.LEFT)
+
 
         # Speed label
         speed_label = tk.Label(self.controls_frame, text="Speed:")

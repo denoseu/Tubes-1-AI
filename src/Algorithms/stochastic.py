@@ -31,7 +31,7 @@ class StochasticStrategy(AlgorithmStrategy):
             iterations.append((cube.cube.copy(), current_score))
             scores.append(current_score)
 
-            print(f"Step {steps} | Pos1: {pos1} <-> Pos2: {pos2} | Current Score: {current_score}")
+            # print(f"Step {steps} | Pos1: {pos1} <-> Pos2: {pos2} | Current Score: {current_score}")
 
         end_time = time.time()
         total_time = end_time - start_time

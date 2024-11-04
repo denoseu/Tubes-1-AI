@@ -8,10 +8,10 @@ class SimulatedAnnealingStrategy(AlgorithmStrategy):
     def execute(self, cube, **kwargs):
         initial_temp = kwargs.get("initial_temp", 1000)
         cooling_rate = kwargs.get("cooling_rate", 0.9999)
-        
+
         start_time = time.time()
         current_score = cube.getCurrentScore()
-        print(f"Initial score: {current_score}")
+        # print(f"Initial score: {current_score}")
         temperature = initial_temp
         scores = [current_score]
         acceptance_probs = []

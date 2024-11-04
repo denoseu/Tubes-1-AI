@@ -51,8 +51,6 @@ class SidewaysStrategy(AlgorithmStrategy):
                 cube.swap_elements(pos1, pos2)
                 current_score = best_score
                 scores.append(current_score)
-
-                print("Ayam")
                 
                 if found_better:
                     improved = True

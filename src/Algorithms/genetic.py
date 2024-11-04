@@ -53,7 +53,7 @@ class GeneticAlgorithm(AlgorithmStrategy):
                 new_population.extend([child1, child2])
             population = new_population
         
-        # Final results
+
         print("\nFinal Results:")
         print(f"Best Individual Fitness: {best_fitness}")
         print(f"Best Obj Function: {best_obj_function}")
