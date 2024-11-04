@@ -6,7 +6,8 @@ import time
 from itertools import combinations
 
 class SidewaysStrategy(AlgorithmStrategy):
-    def execute(self, cube, max_sideways=100):
+    def execute(self, cube, **kwargs):
+        max_sideways = kwargs.get("max_sideways", 10)
         start_time = time.time()
 
         current_score = cube.getCurrentScore()

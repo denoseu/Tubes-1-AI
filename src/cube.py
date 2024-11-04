@@ -38,6 +38,12 @@ class MagicCube:
 
     def get_position(self, value):
         return self.position_map[value]
+    
+    def remake_cube(self):
+        self.cube = self.initialize_cube(self.n)
+        self.position_map = self.create_position_map()
+        self.initialize_sums()
+        self.score = self.calculate_objective_function()
 
     def initialize_sums(self):
         

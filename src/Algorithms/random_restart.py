@@ -6,7 +6,8 @@ from Algorithms.steepest_asscent import SteepestAscentStrategy
 steepestAscent = SteepestAscentStrategy()
 
 class RandomRestartStrategy(AlgorithmStrategy):
-    def execute(self, cube, max_restarts=3):
+    def execute(self, cube, **kwargs):
+        max_restarts = kwargs.get("max_restarts", 10)
         start_time_all = time.time()
         best_score = float("-inf")
         best_cube = None
@@ -16,8 +17,7 @@ class RandomRestartStrategy(AlgorithmStrategy):
         restart_iterations = []
 
         for _ in range(max_restarts):
-            cube.initialize_cube(cube.n)
-            cube.initialize_sums()
+            cube.remake_cube()
             
             start_time = time.time()
             _, current_score, iterations = steepestAscent.execute(cube, plot=False)
