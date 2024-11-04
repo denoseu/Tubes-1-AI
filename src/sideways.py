@@ -3,7 +3,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from plot import PlotManager
 import os
 
-class HCWithSideways(AlgorithmStrategy):
+class SidewaysStrategy(AlgorithmStrategy):
     def execute(self, cube, max_sideways=100):
         current_score = cube.getCurrentScore()
         improved = True
