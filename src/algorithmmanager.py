@@ -236,6 +236,7 @@ class AlgorithmManager:
     def stochastic_hill_climbing(cube, magic_cube, max_steps=100):
         current_score = magic_cube.getCurrentScore()
         steps = 0
+        scores = [current_score]
 
         iterations = []
         while steps < max_steps:
@@ -256,6 +257,11 @@ class AlgorithmManager:
             iterations.append((magic_cube.cube.copy(),current_score))
 
             print(f"Step {steps} | Pos1: {pos1} <-> Pos2: {pos2} | Current Score: {current_score}")
+
+            scores.append(current_score)
+
+        plot_manager = PlotManager(scores)
+        plot_manager.plot_objective_function()
 
         return magic_cube.cube, current_score
 
@@ -355,7 +361,7 @@ n = 5
 magic_cube = MagicCube(n)
 algorithm_manager = AlgorithmManager()
 start_time = time.time()
-final_cube, final_score,iterations = algorithm_manager.solve(magic_cube,"random_restart_hill_climbing")
+final_cube, final_score,iterations = algorithm_manager.solve(magic_cube,"stochastic_hill_climbing")
 end_time = time.time()
 
 
