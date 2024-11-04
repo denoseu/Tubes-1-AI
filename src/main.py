@@ -6,6 +6,8 @@ from Algorithms.sideways import SidewaysStrategy
 from Algorithms.random_restart import RandomRestartStrategy
 from Algorithms.stochastic import StochasticStrategy
 from Algorithms.genetic import GeneticAlgorithm
+from display_cube import CubeDisplayManager
+from animation import AnimationManager
 import time
 
 n = 5
@@ -61,6 +63,14 @@ while True:
     final_cube, final_score, iterations = algorithm_manager.solve(magic_cube)
     end_time = time.time()
     print(f"Hasil: Cube={final_cube}, Skor={final_score}, Iterasi={len(iterations)} Waktu={end_time - start_time} detik")
+
+    # Display cube state
+    display_manager = CubeDisplayManager(magic_cube.cube, final_cube)
+    display_manager.start()
+
+    # Video player animation
+    animation_manager = AnimationManager(n, iterations)
+    animation_manager.start_animation()
     
     # Ask if the user wants to replay
     while True:
