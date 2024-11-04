@@ -56,7 +56,7 @@ while True:
 
     choice = get_valid_input("Masukkan pilihan (1-7): ", range(1, 8))
 
-    kwargs = {}
+    kwargs = {} 
     if choice == 1:
         algorithm_manager.setStrategy(steepestAscent)
     elif choice == 2:

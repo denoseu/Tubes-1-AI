@@ -57,9 +57,9 @@ class GeneticAlgorithm(AlgorithmStrategy):
         print("\nFinal Results:")
         print(f"Best Individual Fitness: {best_fitness}")
         print(f"Best Obj Function: {best_obj_function}")
-        print("Iterations (Best Individual, Fitness):")
-        for i, (ind, obj, fit) in enumerate(iterations):
-            print(f"Iteration {i + 1}: OBJ = {obj}, Fitness = {fit}")
+        # print("Iterations (Best Individual, Fitness):")
+        # for i, (ind, obj, fit) in enumerate(iterations):
+        #     print(f"Iteration {i + 1}: OBJ = {obj}, Fitness = {fit}")
 
         end_time = time.time()
         total_time = end_time - start_time
