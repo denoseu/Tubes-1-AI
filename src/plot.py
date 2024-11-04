@@ -28,7 +28,7 @@ class PlotManager:
         plt.title('Objective Function Score vs. Iterations for Each Restart')
         plt.legend()
         plt.show()
-
+    
     def plot_simulated_annealing(self):
         # Plot the objective function score
         # plt.subplot(1, 2, 1)
@@ -38,3 +38,14 @@ class PlotManager:
         if self.acceptance_probs is not None:
             # plt.subplot(1, 2, 2)
             self.plot_acceptance_probability()
+
+    def plot_genetic_algorithm(self, max_fitness, avg_fitness):
+        plt.figure(figsize=(10, 6))
+        plt.plot(range(1, len(max_fitness) + 1), max_fitness, label="Max Fitness", color="blue")
+        plt.plot(range(1, len(avg_fitness) + 1), avg_fitness, label="Average Fitness", color="green")
+        plt.xlabel("Generation (Iteration)")
+        plt.ylabel("Fitness (Objective Function)")
+        plt.title("Maximum and Average Fitness over Generations")
+        plt.legend()
+        plt.grid()
+        plt.show()

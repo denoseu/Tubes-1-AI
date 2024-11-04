@@ -263,7 +263,7 @@ class AlgorithmManager:
         plot_manager = PlotManager(scores)
         plot_manager.plot_objective_function()
 
-        return magic_cube.cube, current_score
+        return magic_cube.cube, current_score, iterations
 
     def genetic_algorithm(self, magic_cube, population_size, generations, mutation_rate):
         # Initialize population
@@ -272,6 +272,7 @@ class AlgorithmManager:
         best_fitness = float('-inf')
         iterations = []
         scores = []
+        avg_fitness = []
 
         for generation in range(generations):
             # Calculate fitness scores for the population
@@ -287,6 +288,7 @@ class AlgorithmManager:
                 iterations.append((best_individual.copy(), best_fitness))
             
             scores.append(best_fitness)
+            avg_fitness.append(np.mean(fitness_scores))
             print(f"Generation {generation + 1}, Best fitness: {best_fitness}")
             
             # Create new population through selection and reproduction
@@ -306,7 +308,8 @@ class AlgorithmManager:
             population = new_population
 
         plot_manager = PlotManager(scores)
-        plot_manager.plot_objective_function()
+        # plot_manager.plot_objective_function()
+        plot_manager.plot_genetic_algorithm(scores, avg_fitness)
         
         return best_individual, best_fitness, iterations
 
