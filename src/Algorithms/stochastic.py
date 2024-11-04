@@ -1,4 +1,4 @@
-from strategy import AlgorithmStrategy
+from Algorithms.strategy import AlgorithmStrategy
 from plot import PlotManager
 import numpy as np
 

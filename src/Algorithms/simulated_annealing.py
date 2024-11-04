@@ -1,5 +1,5 @@
 import numpy as np
-from strategy import AlgorithmStrategy
+from Algorithms.strategy import AlgorithmStrategy
 import math
 from plot import PlotManager
 
