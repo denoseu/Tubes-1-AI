@@ -53,9 +53,7 @@ class GeneticAlgorithm(AlgorithmStrategy):
 
         return best_individual,best_fitness,iterations
 
-                new_population.extend([child1, child2])
 
-            population = new_population
 
     def _getSumOfObjectiveFunctions(self, population):
         scores = [cube.getCurrentScore() for cube in population]
