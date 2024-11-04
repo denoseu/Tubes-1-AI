@@ -116,7 +116,8 @@ class AlgorithmManager:
                 current_score = best_score
                 improved = True
                 scores.append(current_score) 
-                iterations.append((cube.cube.copy(), current_score))
+                
+            iterations.append((cube.cube.copy(), current_score))
 
         if plot:
             plot_manager = PlotManager(scores)
@@ -161,7 +162,6 @@ class AlgorithmManager:
                 cube.swap_elements(pos1, pos2)
                 current_score = best_score
                 scores.append(current_score)
-                iterations.append((cube.cube.copy(), current_score))
                 
                 if found_better:
                     improved = True
@@ -170,6 +170,7 @@ class AlgorithmManager:
                     improved = True
                 else:
                     improved = False  # stop kalau sudah smpai max_sideways
+            iterations.append((cube.cube.copy(), current_score))
 
         plot_manager = PlotManager(scores)
         plot_manager.plot_objective_function()
