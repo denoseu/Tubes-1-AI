@@ -64,8 +64,6 @@ class AlgorithmManager:
         improved = True
         iterations = []
 
-        print(cube.cube)
-
         while improved:
             improved = False
             best_score = current_score

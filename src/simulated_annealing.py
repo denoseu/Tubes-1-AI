@@ -7,11 +7,9 @@ class SimulatedAnnealingStrategy(AlgorithmStrategy):
         current_score = cube.getCurrentScore()
         temperature = initial_temp
         iterations = []
-        iteration = 0
 
         while temperature > 1e-3:
             
-            iteration += 1
             pos1, pos2 = self._get_random_positions(cube.n)
             cube.swap_elements(pos1, pos2)
             new_score = cube.getCurrentScore()
@@ -24,7 +22,6 @@ class SimulatedAnnealingStrategy(AlgorithmStrategy):
 
             temperature *= cooling_rate
             iterations.append((cube.cube.copy(), current_score))
-            print(f"Iter {iteration} | Temp: {temperature:.5f} | Pos1: {pos1} <-> Pos2: {pos2} | Current Score: {current_score} | Delta: {delta_score}")
 
         return cube.cube, current_score, iterations
 
