@@ -1,10 +1,12 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import numpy as np
+import random
 import math
 import time
 import os
 from cube import MagicCube
 from animation import AnimationManager
+from plot import PlotManager
 
 class AlgorithmManager:
 
@@ -21,6 +23,11 @@ class AlgorithmManager:
             return self.simulated_annealing(magic_cube, initial_temp, cooling_rate)
         elif algorithm == "stochastic_hill_climbing":
             return self.stochastic_hill_climbing(magic_cube, **kwargs)
+        elif algorithm == "genetic":
+            population_size = kwargs.get("population_size", 200)
+            generations = kwargs.get("generations", 100)
+            mutation_rate = kwargs.get("mutation_rate", 0.3)
+            return self.genetic_algorithm(magic_cube, population_size, generations, mutation_rate)
         else:
             raise ValueError("Invalid algorithm specified")
     
@@ -28,6 +35,9 @@ class AlgorithmManager:
         current_score = cube.getCurrentScore()
         temperature = initial_temp
         iterations = []
+
+        scores = [current_score]
+        acceptance_probs = [] 
 
         iteration = 0
         while temperature > 1e-3:
@@ -41,28 +51,43 @@ class AlgorithmManager:
             new_score = cube.getCurrentScore()
             delta_score = new_score - current_score
 
-            if delta_score > 0 or math.exp(delta_score / temperature) > np.random.rand():
+            if delta_score > 0:
+                accepted = True
+            else:
+                acceptance_probability = math.exp(delta_score / temperature)
+                acceptance_probs.append(acceptance_probability)
+                accepted = np.random.rand() < acceptance_probability
+            
+            # If accepted, update the current score; otherwise, revert the swap
+            if accepted:
                 current_score = new_score
             else:
-                cube.swap_elements(pos1, pos2)
+                cube.swap_elements(pos1, pos2)  # Revert swap if not accepted
 
             temperature *= cooling_rate
 
+            scores.append(current_score)
+
             iterations.append((cube.cube.copy(),current_score))
+           
             ## KALAU BUTUH DATA BUAT VISUALISASI TARUH SINI
             # print(f"Iter {iteration} | Temp: {temperature:.5f} | Pos1: {pos1} <-> Pos2: {pos2} | Current Score: {current_score} | Delta: {delta_score}")
 
         print(f"Final Score: {current_score}")
         print(f"Final Cube:\n{cube.cube}")
+
+        plot_manager = PlotManager(scores, acceptance_probs)
+        plot_manager.plot_all()
+        
         return cube.cube, current_score,iterations
     
-
-
-
     def steepest_ascent_parallel(self, cube):
         current_score = cube.getCurrentScore()
         improved = True
         iterations = []
+        scores = []
+
+        print(cube.cube)
 
         while improved:
             improved = False
@@ -90,10 +115,13 @@ class AlgorithmManager:
                 cube.swap_elements(pos1, pos2)
                 current_score = best_score
                 improved = True
+                scores.append(current_score) 
+                iterations.append((cube.cube.copy(), current_score))
 
-                iterations.append((cube.cube.copy(),current_score))
-
-        return cube.cube, current_score,iterations
+        plot_manager = PlotManager(scores)
+        plot_manager.plot_objective_function()
+        
+        return cube.cube, current_score, iterations
 
     
     def hill_climbing_with_sideways(self, cube):
@@ -210,6 +238,90 @@ class AlgorithmManager:
             print(f"Step {steps} | Pos1: {pos1} <-> Pos2: {pos2} | Current Score: {current_score}")
 
         return magic_cube.cube, current_score
+
+    def genetic_algorithm(self, magic_cube, population_size, generations, mutation_rate):
+        # Initialize population
+        population = [MagicCube(magic_cube.n) for _ in range(population_size)]
+        best_individual = None
+        best_fitness = float('-inf')
+        iterations = []
+
+        for generation in range(generations):
+            # Calculate fitness scores for the population
+            fitness_scores = [cube.getCurrentScore() for cube in population]
+            
+            # Find best individual in current generation
+            current_best_fitness = max(fitness_scores)
+            current_best_individual = population[np.argmax(fitness_scores)]
+            
+            if current_best_fitness > best_fitness:
+                best_fitness = current_best_fitness
+                best_individual = current_best_individual.cube.copy()
+                iterations.append((best_individual.copy(), best_fitness))
+            
+            print(f"Generation {generation + 1}, Best fitness: {best_fitness}")
+            
+            # Create new population through selection and reproduction
+            new_population = []
+            for _ in range(population_size // 2):
+                parent1 = self._roulette_wheel_selection(population, fitness_scores)
+                parent2 = self._roulette_wheel_selection(population, fitness_scores)
+                
+                child1, child2 = self._crossover(parent1, parent2)
+                
+                # Perform mutation
+                self._mutate(child1, mutation_rate)
+                self._mutate(child2, mutation_rate)
+                
+                new_population.extend([child1, child2])
+            
+            population = new_population
+        
+        return best_individual, best_fitness, iterations
+
+    def _roulette_wheel_selection(self, population, fitness_scores):
+        total_fitness = sum(fitness_scores)
+        if total_fitness == 0:
+            return random.choice(population)
+        
+        probabilities = [score / total_fitness for score in fitness_scores]
+        selected_idx = np.random.choice(len(population), p=probabilities)
+        
+        # Create a new MagicCube instance with the selected cube configuration
+        selected_cube = MagicCube(population[0].n)
+        selected_cube.cube = population[selected_idx].cube.copy()
+        selected_cube.initialize_sums()
+        return selected_cube
+
+    def _crossover(self, parent1, parent2):
+        n = parent1.n
+        crossover_point = random.randint(1, n-1)
+        
+        # Create new MagicCube instances for children
+        child1 = MagicCube(n)
+        child2 = MagicCube(n)
+        
+        # Perform crossover
+        child1.cube = np.zeros_like(parent1.cube)
+        child2.cube = np.zeros_like(parent2.cube)
+        
+        child1.cube[:crossover_point, :, :] = parent1.cube[:crossover_point, :, :]
+        child1.cube[crossover_point:, :, :] = parent2.cube[crossover_point:, :, :]
+        
+        child2.cube[:crossover_point, :, :] = parent2.cube[:crossover_point, :, :]
+        child2.cube[crossover_point:, :, :] = parent1.cube[crossover_point:, :, :]
+        
+        # Initialize sums for the new cubes
+        child1.initialize_sums()
+        child2.initialize_sums()
+        
+        return child1, child2
+
+    def _mutate(self, cube, mutation_rate):
+        if random.random() < mutation_rate:
+            pos1 = tuple(np.random.randint(cube.n, size=3))
+            pos2 = tuple(np.random.randint(cube.n, size=3))
+            cube.swap_elements(pos1, pos2)
 
     def evaluate_swap(self, magic_cube, pos1, pos2):
         magic_cube.swap_elements(pos1, pos2)
