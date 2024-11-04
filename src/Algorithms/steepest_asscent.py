@@ -37,7 +37,6 @@ class SteepestAscentStrategy(AlgorithmStrategy):
                         best_positions = (pos1, pos2)
 
             if best_positions:
-                print(f"Best Score: {best_score}")
                 pos1, pos2 = best_positions
                 cube.swap_elements(pos1, pos2)
                 current_score = best_score

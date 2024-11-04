@@ -21,6 +21,7 @@ genetic = GeneticAlgorithm()
 
 while True:
     magic_cube = MagicCube(n)
+    initial_cube = magic_cube.cube.copy()
     # Continuously prompt for algorithm selection until a valid option is chosen
     while True:
         print("\nPilih Algoritma:")
@@ -62,10 +63,9 @@ while True:
     start_time = time.time()
     final_cube, final_score, iterations = algorithm_manager.solve(magic_cube)
     end_time = time.time()
-    print(f"Hasil: Cube={final_cube}, Skor={final_score}, Iterasi={len(iterations)} Waktu={end_time - start_time} detik")
 
     # Display cube state
-    display_manager = CubeDisplayManager(magic_cube.cube, final_cube)
+    display_manager = CubeDisplayManager(initial_cube, final_cube)
     display_manager.start()
 
     # Video player animation
