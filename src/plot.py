@@ -59,7 +59,7 @@ class PlotManager:
         plt.show()
 
     def plot_acceptance_probability(self):
-        plt.plot(self.acceptance_probs)
+        plt.scatter(range(len(self.acceptance_probs)), self.acceptance_probs, s=10) 
         plt.xlabel('Iterations')
         plt.ylabel('Acceptance Probability')
         plt.title('Acceptance Probability vs Iterations')
