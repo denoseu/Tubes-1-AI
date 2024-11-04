@@ -42,6 +42,26 @@ class PlotManager:
         plt.legend()
         plt.show()
 
+    def plot_objective_function_simulated(self, total_iterations, total_time, final_score, stuck_frequency):
+        plt.figure(figsize=(10, 6))
+        plt.plot(self.scores, label="Objective Function Score")
+        plt.xlabel('Iteration')
+        plt.ylabel('Objective Function Score')
+        
+        # Add title and details in a text box
+        title = f'Simulated Annealing: Objective Function vs Iteration\nFinal Score: {final_score}'
+        plt.title(title)
+        
+        # Details about the execution
+        textstr = (f'Total Iterations: {total_iterations}\n'
+                   f'Total Time: {total_time:.2f} seconds\n'
+                   f'Frequency of Getting Stuck: {stuck_frequency}')
+        plt.gca().text(0.05, 0.95, textstr, transform=plt.gca().transAxes,
+                       fontsize=10, verticalalignment='top', bbox=dict(facecolor='white', alpha=0.5))
+
+        plt.legend()
+        plt.show()
+
     def plot_acceptance_probability(self):
         plt.plot(self.acceptance_probs)
         plt.xlabel('Iterations')
@@ -59,11 +79,7 @@ class PlotManager:
         plt.legend()
         plt.show()
     
-    def plot_simulated_annealing(self):
-        # Plot the objective function score
-        self.plot_objective_function()
-
-        # Plot acceptance probability only if available (for simulated annealing)
+    def plot_acceptance_simulated_annealing(self):
         if self.acceptance_probs is not None:
             self.plot_acceptance_probability()
 
