@@ -180,6 +180,7 @@ class AlgorithmManager:
     def random_restart_hill_climbing(self, magic_cube, max_restarts=2):
         best_score = float("-inf")
         best_cube = None
+        best_iterations = None
         all_scores = []
 
         for _ in range(max_restarts):
@@ -194,11 +195,12 @@ class AlgorithmManager:
             if current_score > best_score:
                 best_score = current_score
                 best_cube = magic_cube.cube.copy()
+                best_iterations = iterations
 
         plot_manager = PlotManager()
         plot_manager.plot_multiple_objective_functions(all_scores) # Plot all scores for each restart
 
-        return best_cube, best_score
+        return best_cube, best_score, best_iterations
 
     def steepest_ascent(self, magic_cube, max_steps=100):
         current_score = magic_cube.getCurrentScore()
@@ -370,7 +372,7 @@ n = 5
 magic_cube = MagicCube(n)
 algorithm_manager = AlgorithmManager()
 start_time = time.time()
-final_cube, final_score,iterations = algorithm_manager.solve(magic_cube,"genetic")
+final_cube, final_score,iterations = algorithm_manager.solve(magic_cube,"random_restart_hill_climbing")
 end_time = time.time()
 
 
