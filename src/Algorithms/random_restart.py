@@ -1,8 +1,7 @@
 import time
-from strategy import AlgorithmStrategy
 from Algorithms.strategy import AlgorithmStrategy
 from plot import PlotManager
-from steepest_asscent import SteepestAscentStrategy
+from Algorithms.steepest_asscent import SteepestAscentStrategy
 
 steepestAscent = SteepestAscentStrategy()
 
