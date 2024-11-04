@@ -21,7 +21,6 @@ class MagicCube:
         self.main_diagonals = [0, 0, 0, 0]     # 3D diagonals
         self.initialize_sums()                 
         self.score = self.calculate_objective_function()
-    
 
     def calculate_magic_number(self, n):
         return n * (n**3 + 1) // 2
@@ -33,6 +32,9 @@ class MagicCube:
     def create_position_map(self):
         # Map values to their positions for quick lookups
         return {self.cube[i, j, k]: (i, j, k) for i in range(self.n) for j in range(self.n) for k in range(self.n)}
+    
+    def update_position_map(self):
+        self.position_map = self.create_position_map()
 
     def get_position(self, value):
         return self.position_map[value]
@@ -160,6 +162,12 @@ class MagicCube:
         self.swap_elements(pos1, pos2)
         
         return score, pos1, pos2
+    
+    def swap_number(self,num1,num2):
+        pos1 = self.position_map[num1]
+        pos2 = self.position_map[num2]
+        
+        self.swap_elements(pos1,pos2)
     
     def evaluate_swap_score(self, pos1, pos2):
         val1 = self.cube[pos1]
