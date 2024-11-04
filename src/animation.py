@@ -36,6 +36,13 @@ class AnimationManager:
                                      orient=tk.HORIZONTAL, command=self.on_progress_change, label="Progress")
         self.progress_bar.pack(side=tk.LEFT, fill=tk.X, expand=True)
 
+        # Add an Entry widget to allow direct frame input
+        self.frame_entry = tk.Entry(self.controls_frame, width=5)
+        self.frame_entry.insert(0, str(self.current_frame))
+        self.frame_entry.bind("<Return>", self.on_frame_entry)
+        self.frame_entry.pack(side=tk.LEFT)
+
+
         speed_label = tk.Label(self.controls_frame, text="Speed:")
         speed_label.pack(side=tk.LEFT)
 
@@ -95,6 +102,19 @@ class AnimationManager:
         """Update the plot when the progress slider is changed."""
         self.current_frame = int(value)
         self.update_cube(self.current_frame)
+
+    def on_frame_entry(self, event):
+        """Handle direct frame input from the entry box."""
+        try:
+            frame = int(self.frame_entry.get())
+            if 0 <= frame < len(self.iterations):
+                self.current_frame = frame
+                self.progress_bar.set(frame)  # Sync the slider with the entered frame
+                self.update_cube(self.current_frame)  # Refresh the cube display
+            else:
+                print("Frame out of range.")
+        except ValueError:
+            print("Invalid frame number entered.")
 
     def start_animation(self):
         """Start the Tkinter main loop."""
