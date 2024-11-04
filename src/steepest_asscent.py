@@ -1,10 +1,15 @@
 from strategy import AlgorithmStrategy
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from plot import PlotManager
+
 class SteepestAscentStrategy(AlgorithmStrategy):
-    def execute(self, cube):
+    def execute(self, cube, plot=True):
         current_score = cube.getCurrentScore()
         improved = True
         iterations = []
+        scores = []
+
+        print(cube.cube)
 
         while improved:
             improved = False
@@ -32,7 +37,12 @@ class SteepestAscentStrategy(AlgorithmStrategy):
                 cube.swap_elements(pos1, pos2)
                 current_score = best_score
                 improved = True
+                scores.append(current_score) 
+                
+            iterations.append((cube.cube.copy(), current_score))
 
-                iterations.append((cube.cube.copy(),current_score))
-
-        return cube.cube, current_score,iterations
+        if plot:
+            plot_manager = PlotManager(scores)
+            plot_manager.plot_objective_function()
+        
+        return cube.cube, current_score, iterations
