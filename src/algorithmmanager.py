@@ -271,6 +271,7 @@ class AlgorithmManager:
         best_individual = None
         best_fitness = float('-inf')
         iterations = []
+        scores = []
 
         for generation in range(generations):
             # Calculate fitness scores for the population
@@ -285,6 +286,7 @@ class AlgorithmManager:
                 best_individual = current_best_individual.cube.copy()
                 iterations.append((best_individual.copy(), best_fitness))
             
+            scores.append(best_fitness)
             print(f"Generation {generation + 1}, Best fitness: {best_fitness}")
             
             # Create new population through selection and reproduction
@@ -302,6 +304,9 @@ class AlgorithmManager:
                 new_population.extend([child1, child2])
             
             population = new_population
+
+        plot_manager = PlotManager(scores)
+        plot_manager.plot_objective_function()
         
         return best_individual, best_fitness, iterations
 
@@ -361,7 +366,7 @@ n = 5
 magic_cube = MagicCube(n)
 algorithm_manager = AlgorithmManager()
 start_time = time.time()
-final_cube, final_score,iterations = algorithm_manager.solve(magic_cube,"stochastic_hill_climbing")
+final_cube, final_score,iterations = algorithm_manager.solve(magic_cube,"genetic")
 end_time = time.time()
 
 
