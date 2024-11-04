@@ -5,7 +5,10 @@ from Algorithms.strategy import AlgorithmStrategy
 from cube import MagicCube
 
 class GeneticAlgorithm(AlgorithmStrategy):
-    def execute(self, magic_cube, population_size, generations,n):
+    def execute(self, magic_cube,**kwargs ):
+        population_size = kwargs.get('population_size', 10000)
+        generations = kwargs.get('generations', 10000)
+        n = kwargs.get('n', 5)
         population = [MagicCube(n) for _ in range(population_size)]
         best_individual = None
         best_fitness= float('-inf')
