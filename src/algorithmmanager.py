@@ -5,6 +5,7 @@ import time
 import os
 from cube import MagicCube
 from animation import AnimationManager
+from plot import PlotManager
 
 class AlgorithmManager:
 
@@ -29,6 +30,9 @@ class AlgorithmManager:
         temperature = initial_temp
         iterations = []
 
+        scores = [current_score]
+        acceptance_probs = [] 
+
         iteration = 0
         while temperature > 1e-3:
             iteration += 1
@@ -41,28 +45,43 @@ class AlgorithmManager:
             new_score = cube.getCurrentScore()
             delta_score = new_score - current_score
 
-            if delta_score > 0 or math.exp(delta_score / temperature) > np.random.rand():
+            if delta_score > 0:
+                accepted = True
+            else:
+                acceptance_probability = math.exp(delta_score / temperature)
+                acceptance_probs.append(acceptance_probability)
+                accepted = np.random.rand() < acceptance_probability
+            
+            # If accepted, update the current score; otherwise, revert the swap
+            if accepted:
                 current_score = new_score
             else:
-                cube.swap_elements(pos1, pos2)
+                cube.swap_elements(pos1, pos2)  # Revert swap if not accepted
 
             temperature *= cooling_rate
 
+            scores.append(current_score)
+
             iterations.append((cube.cube.copy(),current_score))
+           
             ## KALAU BUTUH DATA BUAT VISUALISASI TARUH SINI
             # print(f"Iter {iteration} | Temp: {temperature:.5f} | Pos1: {pos1} <-> Pos2: {pos2} | Current Score: {current_score} | Delta: {delta_score}")
 
         print(f"Final Score: {current_score}")
         print(f"Final Cube:\n{cube.cube}")
+
+        plot_manager = PlotManager(scores, acceptance_probs)
+        plot_manager.plot_all()
+        
         return cube.cube, current_score,iterations
     
-
-
-
     def steepest_ascent_parallel(self, cube):
         current_score = cube.getCurrentScore()
         improved = True
         iterations = []
+        scores = []
+
+        print(cube.cube)
 
         while improved:
             improved = False
@@ -90,10 +109,13 @@ class AlgorithmManager:
                 cube.swap_elements(pos1, pos2)
                 current_score = best_score
                 improved = True
+                scores.append(current_score) 
+                iterations.append((cube.cube.copy(), current_score))
 
-                iterations.append((cube.cube.copy(),current_score))
-
-        return cube.cube, current_score,iterations
+        plot_manager = PlotManager(scores)
+        plot_manager.plot_objective_function()
+        
+        return cube.cube, current_score, iterations
 
     
     def hill_climbing_with_sideways(self, cube):
@@ -223,7 +245,7 @@ n = 5
 magic_cube = MagicCube(n)
 algorithm_manager = AlgorithmManager()
 start_time = time.time()
-final_cube, final_score,iterations = algorithm_manager.solve(magic_cube,"simulated_annealing")
+final_cube, final_score,iterations = algorithm_manager.solve(magic_cube,"steepest_ascent")
 end_time = time.time()
 
 
