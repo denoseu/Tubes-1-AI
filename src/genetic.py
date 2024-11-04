@@ -16,7 +16,7 @@ class GeneticAlgorithm(AlgorithmStrategy):
 
         for i in range(generations):
             sumofObjectiveFunctions = self._getSumOfObjectiveFunctions(population)
-            fitness_scores = [(abs(cube.getCurrentScore())/sumofObjectiveFunctions) for cube in population]
+            fitness_scores = self._get_fitness_array(population)
             
             # Find best individual in current generation
             current_best_fitness = max(fitness_scores)
@@ -115,6 +115,18 @@ class GeneticAlgorithm(AlgorithmStrategy):
                 num2 = random.randint(1, 125)
 
             cube.swap_number(num1, num2)
+
+    def _get_fitness_array(self, population):
+
+        sum_total = sum(abs(cube.getCurrentScore()) for cube in population)
+
+        
+
+        real_fitness = [sum_total + cube.getCurrentScore() for cube in population]
+        fitness_total = sum(real_fitness)
+
+        return [x/fitness_total for x in real_fitness]
+
 
 
 
