@@ -245,7 +245,7 @@ n = 5
 magic_cube = MagicCube(n)
 algorithm_manager = AlgorithmManager()
 start_time = time.time()
-final_cube, final_score,iterations = algorithm_manager.solve(magic_cube,"steepest_ascent")
+final_cube, final_score,iterations = algorithm_manager.solve(magic_cube,"simulated_annealing")
 end_time = time.time()
 
 

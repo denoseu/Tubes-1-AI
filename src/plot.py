@@ -20,8 +20,6 @@ class PlotManager:
         plt.show()
 
     def plot_all(self):
-        plt.figure(figsize=(12, 5))
-        
         # Plot the objective function score
         # plt.subplot(1, 2, 1)
         self.plot_objective_function()
@@ -30,6 +28,3 @@ class PlotManager:
         if self.acceptance_probs is not None:
             # plt.subplot(1, 2, 2)
             self.plot_acceptance_probability()
-        
-        plt.tight_layout()
-        plt.show()
