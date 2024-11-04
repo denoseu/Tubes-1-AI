@@ -14,7 +14,7 @@ class AlgorithmManager:
         if algorithm == "steepest_ascent":
             return self.steepest_ascent_parallel(magic_cube)
         elif algorithm == "hill_climbing_with_sideways":
-            return self.hill_climbing_with_sideways(magic_cube)
+            return self.hill_climbing_with_sideways(magic_cube, 30)
         elif algorithm == "random_restart_hill_climbing":
             return self.random_restart_hill_climbing(magic_cube, **kwargs)
         elif algorithm == "simulated_annealing":
@@ -77,11 +77,11 @@ class AlgorithmManager:
         print(f"Final Cube:\n{cube.cube}")
 
         plot_manager = PlotManager(scores, acceptance_probs)
-        plot_manager.plot_all()
+        plot_manager.plot_simulated_annealing()
         
         return cube.cube, current_score,iterations
     
-    def steepest_ascent_parallel(self, cube):
+    def steepest_ascent_parallel(self, cube, plot=True):
         current_score = cube.getCurrentScore()
         improved = True
         iterations = []
@@ -118,64 +118,84 @@ class AlgorithmManager:
                 scores.append(current_score) 
                 iterations.append((cube.cube.copy(), current_score))
 
-        plot_manager = PlotManager(scores)
-        plot_manager.plot_objective_function()
+        if plot:
+            plot_manager = PlotManager(scores)
+            plot_manager.plot_objective_function()
         
         return cube.cube, current_score, iterations
 
     
-    def hill_climbing_with_sideways(self, cube):
+    def hill_climbing_with_sideways(self, cube, max_sideways):
         current_score = cube.getCurrentScore()
         improved = True
+        sideways_moves = 0 
+        scores = [current_score] 
         iterations = []
 
         while improved:
             improved = False
             best_score = current_score
             best_positions = None
+            found_better = False  # udah ketemu solusi lebih bagus
 
-            with ThreadPoolExecutor(os.cpu) as executor:
+            with ThreadPoolExecutor(os.cpu_count()) as executor:
                 futures = []
                 for i in range(1, cube.n**3):
                     for j in range(i + 1, cube.n**3):
                         pos1 = cube.get_position(i)
                         pos2 = cube.get_position(j)
-
-                        # Submit swap evaluations to the thread pool
                         futures.append(executor.submit(cube.evaluate_swap, pos1, pos2))
 
                 for future in as_completed(futures):
                     swap_score, pos1, pos2 = future.result()
-                    if swap_score >= best_score:
+                    if swap_score > best_score:
                         best_score = swap_score
                         best_positions = (pos1, pos2)
-
+                        found_better = True
+                        sideways_moves = 0  # reset sideway count kalau next nya better
+                    elif swap_score == best_score and not found_better:
+                        best_positions = (pos1, pos2)
+            
             if best_positions:
                 pos1, pos2 = best_positions
                 cube.swap_elements(pos1, pos2)
                 current_score = best_score
-                improved = True
+                scores.append(current_score)
+                iterations.append((cube.cube.copy(), current_score))
+                
+                if found_better:
+                    improved = True
+                elif sideways_moves < max_sideways:
+                    sideways_moves += 1
+                    improved = True
+                else:
+                    improved = False  # stop kalau sudah smpai max_sideways
 
-                iterations.append((cube.cube.copy(),current_score))
+        plot_manager = PlotManager(scores)
+        plot_manager.plot_objective_function()
 
-        return cube, current_score,iterations
+        return cube, current_score, iterations
      
-    def random_restart_hill_climbing(self, magic_cube, max_restarts=10, max_steps=100):
+    def random_restart_hill_climbing(self, magic_cube, max_restarts=2):
         best_score = float("-inf")
         best_cube = None
-
-        iterations = []
+        all_scores = []
 
         for _ in range(max_restarts):
             magic_cube.initialize_cube(magic_cube.n)
             magic_cube.initialize_sums()
-            current_score = magic_cube.steepest_ascent(magic_cube, max_steps)
 
+            _, current_score, iterations = self.steepest_ascent_parallel(magic_cube, plot=False)
+            
+            restart_scores = [score for _, score in iterations]
+            all_scores.append(restart_scores)
+            
             if current_score > best_score:
                 best_score = current_score
                 best_cube = magic_cube.cube.copy()
 
-                iterations.append((magic_cube.cube.copy(),current_score))
+        plot_manager = PlotManager()
+        plot_manager.plot_multiple_objective_functions(all_scores) # Plot all scores for each restart
 
         return best_cube, best_score
 
@@ -335,7 +355,7 @@ n = 5
 magic_cube = MagicCube(n)
 algorithm_manager = AlgorithmManager()
 start_time = time.time()
-final_cube, final_score,iterations = algorithm_manager.solve(magic_cube,"simulated_annealing")
+final_cube, final_score,iterations = algorithm_manager.solve(magic_cube,"random_restart_hill_climbing")
 end_time = time.time()
 
 
