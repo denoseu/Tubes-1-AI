@@ -3,56 +3,71 @@ import random
 
 from Algorithms.strategy import AlgorithmStrategy
 from cube import MagicCube
+from plot import PlotManager
+import time
 
 class GeneticAlgorithm(AlgorithmStrategy):
-    def execute(self, magic_cube, population_size, generations,n):
+    def execute(self, magic_cube, population_size=200, generations=100, n=5):
+        start_time = time.time()
         population = [MagicCube(n) for _ in range(population_size)]
         best_individual = None
-        best_fitness= float('-inf')
+        best_fitness = float('-inf')
         best_obj_function = float('-inf')
         iterations = []
-        scores = []
-        avg_fitness = []
+        scores = []  # to store best fitness per generation
+        avg_fitness = []  # to store average fitness per generation
+        best_obj_per_iteration = []  # to store best objective function per generation
+        avg_obj_per_iteration = []  # to store average objective function per generation
 
         for i in range(generations):
             sumofObjectiveFunctions = self._getSumOfObjectiveFunctions(population)
             fitness_scores = self._get_fitness_array(population)
             
-            # Find best individual in current generation
             current_best_fitness = max(fitness_scores)
             current_best_individual = population[np.argmax(fitness_scores)]
-            iterations.append((current_best_individual.cube.copy(), current_best_individual.getCurrentScore(),current_best_fitness))
+            current_best_obj_function = current_best_individual.getCurrentScore()
+            current_avg_obj_function = np.mean([cube.getCurrentScore() for cube in population])
+            
+            best_obj_per_iteration.append(current_best_obj_function)
+            avg_obj_per_iteration.append(current_avg_obj_function)
+
+            scores.append(best_fitness)
+            avg_fitness.append(np.mean(fitness_scores))
 
             if current_best_fitness > best_fitness:
                 best_fitness = current_best_fitness
                 best_individual = current_best_individual.cube.copy()
                 best_obj_function = current_best_individual.getCurrentScore()
 
-            scores.append(best_fitness)
-            avg_fitness.append(np.mean(fitness_scores))
+            iterations.append((current_best_individual.cube.copy(), current_best_obj_function, current_best_fitness))
 
             new_population = []
             for _ in range(population_size // 2):
                 parent1 = self._roulette_wheel_selection(population, fitness_scores)
                 parent2 = self._roulette_wheel_selection(population, fitness_scores)
-                child1,child2 = self._ordered_crossover(parent1,parent2)
+                child1, child2 = self._ordered_crossover(parent1, parent2)
 
                 self._mutate(child1)
                 self._mutate(child2)
 
-                new_population.extend([child1,child2])
+                new_population.extend([child1, child2])
             population = new_population
         
-         # Final results
+        # Final results
         print("\nFinal Results:")
         print(f"Best Individual Fitness: {best_fitness}")
-        print(f"Best Obj Function {best_obj_function}")
+        print(f"Best Obj Function: {best_obj_function}")
         print("Iterations (Best Individual, Fitness):")
-        for i, (ind,obj, fit) in enumerate(iterations):
-            print(f"Iteration {i + 1}: OBJ = {obj} Fitness = {fit}")
+        for i, (ind, obj, fit) in enumerate(iterations):
+            print(f"Iteration {i + 1}: OBJ = {obj}, Fitness = {fit}")
 
-        return best_individual,best_fitness,iterations
+        end_time = time.time()
+        total_time = end_time - start_time
 
+        plotManager = PlotManager(scores)
+        plotManager.plot_genetic_algorithm(best_obj_per_iteration, avg_obj_per_iteration, total_time)
+
+        return best_individual, best_fitness, iterations
 
 
     def _getSumOfObjectiveFunctions(self, population):
