@@ -160,3 +160,69 @@ class MagicCube:
         self.swap_elements(pos1, pos2)
         
         return score, pos1, pos2
+    
+    def evaluate_swap_score(self, pos1, pos2):
+        val1 = self.cube[pos1]
+        val2 = self.cube[pos2]
+        target = self.magic_number
+        hypothetical_score = self.score  
+        
+        x1, y1, z1 = pos1
+        x2, y2, z2 = pos2
+        
+        def temp_diff(current_sum, new_val, old_val):
+            return abs(current_sum - target) - abs((current_sum + new_val - old_val) - target)
+
+        hypothetical_score += temp_diff(self.row_sums[x1, y1], val2, val1)
+        hypothetical_score += temp_diff(self.row_sums[x2, y2], val1, val2)
+        hypothetical_score += temp_diff(self.col_sums[x1, z1], val2, val1)
+        hypothetical_score += temp_diff(self.col_sums[x2, z2], val1, val2)
+        hypothetical_score += temp_diff(self.pillar_sums[y1, z1], val2, val1)
+        hypothetical_score += temp_diff(self.pillar_sums[y2, z2], val1, val2)
+
+        # Adjust diagonals if affected by the swap
+        if y1 == z1:
+            hypothetical_score += temp_diff(self.diagonal_sums["xy_main"][x1], val2, val1)
+        if y2 == z2:
+            hypothetical_score += temp_diff(self.diagonal_sums["xy_main"][x2], val1, val2)
+        if y1 == self.n - z1 - 1:
+            hypothetical_score += temp_diff(self.diagonal_sums["xy_anti"][x1], val2, val1)
+        if y2 == self.n - z2 - 1:
+            hypothetical_score += temp_diff(self.diagonal_sums["xy_anti"][x2], val1, val2)
+        if x1 == z1:
+            hypothetical_score += temp_diff(self.diagonal_sums["yz_main"][y1], val2, val1)
+        if x2 == z2:
+            hypothetical_score += temp_diff(self.diagonal_sums["yz_main"][y2], val1, val2)
+        if x1 == self.n - z1 - 1:
+            hypothetical_score += temp_diff(self.diagonal_sums["yz_anti"][y1], val2, val1)
+        if x2 == self.n - z2 - 1:
+            hypothetical_score += temp_diff(self.diagonal_sums["yz_anti"][y2], val1, val2)
+        if x1 == y1:
+            hypothetical_score += temp_diff(self.diagonal_sums["zx_main"][z1], val2, val1)
+        if x2 == y2:
+            hypothetical_score += temp_diff(self.diagonal_sums["zx_main"][z2], val1, val2)
+        if x1 == self.n - y1 - 1:
+            hypothetical_score += temp_diff(self.diagonal_sums["zx_anti"][z1], val2, val1)
+        if x2 == self.n - y2 - 1:
+            hypothetical_score += temp_diff(self.diagonal_sums["zx_anti"][z2], val1, val2)
+
+        # 3D main diagonals adjustments, if affected by the swap
+        if x1 == y1 == z1:
+            hypothetical_score += temp_diff(self.main_diagonals[0], val2, val1)
+        if x2 == y2 == z2:
+            hypothetical_score += temp_diff(self.main_diagonals[0], val1, val2)
+        if x1 == y1 == self.n - z1 - 1:
+            hypothetical_score += temp_diff(self.main_diagonals[1], val2, val1)
+        if x2 == y2 == self.n - z2 - 1:
+            hypothetical_score += temp_diff(self.main_diagonals[1], val1, val2)
+        if x1 == self.n - y1 - 1 == z1:
+            hypothetical_score += temp_diff(self.main_diagonals[2], val2, val1)
+        if x2 == self.n - y2 - 1 == z2:
+            hypothetical_score += temp_diff(self.main_diagonals[2], val1, val2)
+        if x1 == self.n - y1 - 1 == self.n - z1 - 1:
+            hypothetical_score += temp_diff(self.main_diagonals[3], val2, val1)
+        if x2 == self.n - y2 - 1 == self.n - z2 - 1:
+            hypothetical_score += temp_diff(self.main_diagonals[3], val1, val2)
+
+        # Return the hypothetical objective function value
+        return hypothetical_score

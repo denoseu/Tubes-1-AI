@@ -36,9 +36,9 @@ class SimulatedAnnealingStrategy(AlgorithmStrategy):
                 accepted = np.random.rand() < acceptance_probability
             
             if accepted:
-                current_score = new_score
+                current_score = new_score 
             else:
-                cube.swap_elements(pos1, pos2)
+                cube.swap_elements(pos1, pos2) ## revert 
 
             temperature *= cooling_rate
             scores.append(current_score)

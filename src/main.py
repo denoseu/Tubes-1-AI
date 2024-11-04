@@ -9,7 +9,6 @@ from Algorithms.genetic import GeneticAlgorithm
 import time
 
 n = 5
-magic_cube = MagicCube(n)
 algorithm_manager = AlgorithmManager()
 simulatedAnnealing = SimulatedAnnealingStrategy()
 sideways = SidewaysStrategy()
@@ -19,6 +18,7 @@ stochastic = StochasticStrategy()
 genetic = GeneticAlgorithm()
 
 while True:
+    magic_cube = MagicCube(n)
     # Continuously prompt for algorithm selection until a valid option is chosen
     while True:
         print("\nPilih Algoritma:")
