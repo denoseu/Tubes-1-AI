@@ -4,6 +4,7 @@ import math
 import time
 import os
 from cube import MagicCube
+from animation import AnimationManager
 
 class AlgorithmManager:
 
@@ -26,6 +27,7 @@ class AlgorithmManager:
     def simulated_annealing(self, cube, initial_temp, cooling_rate):
         current_score = cube.getCurrentScore()
         temperature = initial_temp
+        iterations = []
 
         iteration = 0
         while temperature > 1e-3:
@@ -46,12 +48,13 @@ class AlgorithmManager:
 
             temperature *= cooling_rate
 
+            iterations.append((cube.cube.copy(),current_score))
             ## KALAU BUTUH DATA BUAT VISUALISASI TARUH SINI
-            print(f"Iter {iteration} | Temp: {temperature:.5f} | Pos1: {pos1} <-> Pos2: {pos2} | Current Score: {current_score} | Delta: {delta_score}")
+            # print(f"Iter {iteration} | Temp: {temperature:.5f} | Pos1: {pos1} <-> Pos2: {pos2} | Current Score: {current_score} | Delta: {delta_score}")
 
         print(f"Final Score: {current_score}")
         print(f"Final Cube:\n{cube.cube}")
-        return cube.cube, current_score
+        return cube.cube, current_score,iterations
     
 
 
@@ -59,6 +62,7 @@ class AlgorithmManager:
     def steepest_ascent_parallel(self, cube):
         current_score = cube.getCurrentScore()
         improved = True
+        iterations = []
 
         print(cube.cube)
 
@@ -89,12 +93,15 @@ class AlgorithmManager:
                 current_score = best_score
                 improved = True
 
-        return cube.cube, current_score
+                iterations.append((cube.cube.copy(),current_score))
+
+        return cube.cube, current_score,iterations
 
     
     def hill_climbing_with_sideways(self, cube):
         current_score = cube.getCurrentScore()
         improved = True
+        iterations = []
 
         while improved:
             improved = False
@@ -123,11 +130,15 @@ class AlgorithmManager:
                 current_score = best_score
                 improved = True
 
-        return cube, current_score
+                iterations.append((cube.cube.copy(),current_score))
+
+        return cube, current_score,iterations
      
     def random_restart_hill_climbing(self, magic_cube, max_restarts=10, max_steps=100):
         best_score = float("-inf")
         best_cube = None
+
+        iterations = []
 
         for _ in range(max_restarts):
             magic_cube.initialize_cube(magic_cube.n)
@@ -137,6 +148,8 @@ class AlgorithmManager:
             if current_score > best_score:
                 best_score = current_score
                 best_cube = magic_cube.cube.copy()
+
+                iterations.append((magic_cube.cube.copy(),current_score))
 
         return best_cube, best_score
 
@@ -178,6 +191,7 @@ class AlgorithmManager:
         current_score = magic_cube.getCurrentScore()
         steps = 0
 
+        iterations = []
         while steps < max_steps:
             steps += 1
             # Choose two random positions to swap
@@ -192,6 +206,8 @@ class AlgorithmManager:
                 current_score = new_score
             else:
                 magic_cube.swap_elements(pos1, pos2)  # Revert swap
+            
+            iterations.append((magic_cube.cube.copy(),current_score))
 
             print(f"Step {steps} | Pos1: {pos1} <-> Pos2: {pos2} | Current Score: {current_score}")
 
@@ -209,10 +225,18 @@ n = 5
 magic_cube = MagicCube(n)
 algorithm_manager = AlgorithmManager()
 start_time = time.time()
-final_cube, final_score = algorithm_manager.solve(magic_cube, "steepest_ascent")
+final_cube, final_score,iterations = algorithm_manager.solve(magic_cube,"simulated_annealing")
 end_time = time.time()
-print(f"Final Cube:\n{final_cube}")
-print(f"Final Score: {final_score}")
-print(f"Elapsed time: {end_time - start_time:.2f} seconds")
+
+
+print('Starting Animation')
+print(f'Iteration length {len(iterations)}')
+animation_manager = AnimationManager(5,iterations)
+animation_manager.start_animation()
+
+# print(f"Final Cube:\n{final_cube}")
+# print(f"Final Score: {final_score}")
+# print(f"Elapsed time: {end_time - start_time:.2f} seconds")
+
 
 
