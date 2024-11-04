@@ -22,6 +22,12 @@ class MagicCube:
         self.initialize_sums()                 
         self.score = self.calculate_objective_function()
 
+    def remake_cube(self):
+        self.cube = self.initialize_cube(self.n)
+        self.position_map = self.create_position_map()
+        self.initialize_sums()
+        self.score = self.calculate_objective_function()
+
     def calculate_magic_number(self, n):
         return n * (n**3 + 1) // 2
 
