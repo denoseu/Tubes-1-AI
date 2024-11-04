@@ -25,17 +25,20 @@ class SimulatedAnnealingStrategy(AlgorithmStrategy):
             new_score = cube.getCurrentScore()
             delta_score = new_score - current_score
 
+            accepted_with_probability = False
+            accepted = False
+            
             if delta_score > 0:
                 accepted = True
-            elif delta_score == 0:
-                stuck_frequency += 1
-                accepted = True 
             else:
                 acceptance_probability = math.exp(delta_score / temperature)
                 acceptance_probs.append(acceptance_probability)
-                accepted = np.random.rand() < acceptance_probability
+                accepted_with_probability = np.random.rand() < acceptance_probability
             
-            if accepted:
+            if accepted_with_probability:
+                stuck_frequency += 1
+
+            if accepted or accepted_with_probability:
                 current_score = new_score
             else:
                 cube.swap_elements(pos1, pos2)
