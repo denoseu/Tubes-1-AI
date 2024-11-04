@@ -2,9 +2,12 @@ from strategy import AlgorithmStrategy
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from plot import PlotManager
 import os
+import time
 
 class SidewaysStrategy(AlgorithmStrategy):
     def execute(self, cube, max_sideways=100):
+        start_time = time.time()
+
         current_score = cube.getCurrentScore()
         improved = True
         sideways_moves = 0 
@@ -15,7 +18,7 @@ class SidewaysStrategy(AlgorithmStrategy):
             improved = False
             best_score = current_score
             best_positions = None
-            found_better = False  # udah ketemu solusi lebih bagus
+            found_better = False
 
             with ThreadPoolExecutor(os.cpu_count()) as executor:
                 futures = []
@@ -31,7 +34,7 @@ class SidewaysStrategy(AlgorithmStrategy):
                         best_score = swap_score
                         best_positions = (pos1, pos2)
                         found_better = True
-                        sideways_moves = 0  # reset sideway count kalau next nya better
+                        sideways_moves = 0
                     elif swap_score == best_score and not found_better:
                         best_positions = (pos1, pos2)
             
@@ -47,10 +50,16 @@ class SidewaysStrategy(AlgorithmStrategy):
                     sideways_moves += 1
                     improved = True
                 else:
-                    improved = False  # stop kalau sudah smpai max_sideways
+                    improved = False # max sideway alr
+            
             iterations.append((cube.cube.copy(), current_score))
 
-        plot_manager = PlotManager(scores)
-        plot_manager.plot_objective_function()
+        end_time = time.time()
+        total_time = end_time - start_time
+        total_iterations = len(scores)
+        final_score = current_score
 
-        return cube, current_score, iterations
+        plot_manager = PlotManager(scores)
+        plot_manager.plot_sideways_strategy(total_iterations, total_time, sideways_moves, final_score)
+
+        return cube.cube, current_score, iterations

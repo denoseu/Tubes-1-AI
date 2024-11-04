@@ -1,9 +1,12 @@
 from strategy import AlgorithmStrategy
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from plot import PlotManager
+import time
 
 class SteepestAscentStrategy(AlgorithmStrategy):
     def execute(self, cube, plot=True):
+        start_time = time.time()
+
         current_score = cube.getCurrentScore()
         improved = True
         iterations = []
@@ -41,8 +44,18 @@ class SteepestAscentStrategy(AlgorithmStrategy):
                 
             iterations.append((cube.cube.copy(), current_score))
 
+        # Calculate the time taken for execution
+        end_time = time.time()
+        total_time = end_time - start_time
+        total_iterations = len(scores)
+        final_score = current_score
+
         if plot:
             plot_manager = PlotManager(scores)
-            plot_manager.plot_objective_function()
+            plot_manager.plot_objective_function(
+                total_iterations=total_iterations, 
+                total_time=total_time, 
+                final_score=final_score
+            )
         
         return cube.cube, current_score, iterations

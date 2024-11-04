@@ -5,11 +5,41 @@ class PlotManager:
         self.scores = scores if scores is not None else []
         self.acceptance_probs = acceptance_probs if acceptance_probs is not None else []
 
-    def plot_objective_function(self):
+    def plot_objective_function(self, total_iterations=None, total_time=None, final_score=None):
+        plt.figure(figsize=(10, 6))
         plt.plot(self.scores)
         plt.xlabel('Iteration')
         plt.ylabel('Objective Function Score')
-        plt.title('Objective Function Score vs Iteration')
+        
+        # Include the score, iteration, and time in the title or as text
+        title = 'Objective Function Score vs Iteration'
+        if final_score is not None:
+            title += f" | Final Score: {final_score}"
+        plt.title(title)
+        
+        # Display additional details as annotations on the plot
+        textstr = f'Total Iterations: {total_iterations}\nTotal Time: {total_time:.2f} seconds'
+        plt.gca().text(0.05, 0.95, textstr, transform=plt.gca().transAxes,
+                       fontsize=10, verticalalignment='top', bbox=dict(facecolor='white', alpha=0.5))
+
+        plt.show()
+
+    def plot_sideways_strategy(self, total_iterations, total_time, max_sideways, final_score):
+        plt.figure(figsize=(10, 6))
+        plt.plot(self.scores, label="Score over Iterations")
+        plt.xlabel('Iteration')
+        plt.ylabel('Objective Function Score')
+        
+        title = f'Objective Function Score vs Iteration (Sideways Strategy)\nFinal Score: {final_score}'
+        plt.title(title)
+        
+        textstr = (f'Total Iterations: {total_iterations}\n'
+                   f'Total Time: {total_time:.2f} seconds\n'
+                   f'Number of Sideways Moves Done: {max_sideways}')
+        plt.gca().text(0.05, 0.95, textstr, transform=plt.gca().transAxes,
+                       fontsize=10, verticalalignment='top', bbox=dict(facecolor='white', alpha=0.5))
+
+        plt.legend()
         plt.show()
 
     def plot_acceptance_probability(self):
@@ -31,12 +61,10 @@ class PlotManager:
     
     def plot_simulated_annealing(self):
         # Plot the objective function score
-        # plt.subplot(1, 2, 1)
         self.plot_objective_function()
 
         # Plot acceptance probability only if available (for simulated annealing)
         if self.acceptance_probs is not None:
-            # plt.subplot(1, 2, 2)
             self.plot_acceptance_probability()
 
     def plot_genetic_algorithm(self, max_fitness, avg_fitness):
