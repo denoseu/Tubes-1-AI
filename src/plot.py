@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 
 class PlotManager:
     def __init__(self, scores=None, acceptance_probs=None):
@@ -59,7 +60,9 @@ class PlotManager:
         plt.show()
 
     def plot_acceptance_probability(self):
-        plt.plot(self.acceptance_probs)
+        window_size = 200
+        smoothed_probs = np.convolve(self.acceptance_probs, np.ones(window_size)/window_size, mode='valid')
+        plt.plot(smoothed_probs)
         plt.xlabel('Iterations')
         plt.ylabel('Acceptance Probability')
         plt.title('Acceptance Probability vs Iterations')
