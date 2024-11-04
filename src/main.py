@@ -59,6 +59,8 @@ while True:
         print("Exiting program.")
         break
 
+    
+
     # Run the selected algorithm
     start_time = time.time()
     final_cube, final_score, iterations = algorithm_manager.solve(magic_cube)

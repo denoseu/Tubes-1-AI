@@ -5,7 +5,10 @@ import time
 from plot import PlotManager
 
 class SimulatedAnnealingStrategy(AlgorithmStrategy):
-    def execute(self, cube, initial_temp=1000, cooling_rate=0.9999):
+    def execute(self, cube, **kwargs):
+        initial_temp = kwargs.get("initial_temp", 1000)
+        cooling_rate = kwargs.get("cooling_rate", 0.9999)
+        
         start_time = time.time()
         current_score = cube.getCurrentScore()
         print(f"Initial score: {current_score}")

@@ -4,7 +4,8 @@ import numpy as np
 import time
 
 class StochasticStrategy(AlgorithmStrategy):
-    def execute(self, cube, max_steps=1500000):
+    def execute(self, cube, **kwargs):
+        max_steps = kwargs.get("max_steps", 10000)
         start_time = time.time()
         
         current_score = cube.getCurrentScore()
